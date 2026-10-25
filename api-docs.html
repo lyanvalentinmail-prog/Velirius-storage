@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0e0d0c" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f6f3ee" media="(prefers-color-scheme: light)" />
+    <title>API · Galería</title>
+    <meta name="description" content="Endpoints JSON de la galería de fotos: todas las fotos, álbumes y metadatos." />
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="assets/estilos.css" />
+    <script>
+      (function () {
+        try {
+          var guardado = localStorage.getItem('tema');
+          var sistema = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'oscuro' : 'claro';
+          document.documentElement.dataset.tema = guardado || sistema;
+        } catch (e) {
+          document.documentElement.dataset.tema = 'claro';
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <header class="cabecera">
+      <a class="marca" href="./" aria-label="Volver a la galería">
+        <span class="marca__punto" aria-hidden="true"></span>
+        <span id="marca-texto">Galería</span>
+      </a>
+
+      <div class="acciones">
+        <a class="boton boton--chico" href="./">← Volver a la galería</a>
+        <button class="boton-icono" id="boton-tema" type="button" aria-label="Cambiar tema" title="Cambiar tema">
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="icono-luna">
+            <path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+          </svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true" class="icono-sol">
+            <circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.7" />
+            <path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.2 5.2l1.6 1.6M17.2 17.2l1.6 1.6M18.8 5.2l-1.6 1.6M6.8 17.2l-1.6 1.6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <section class="portada portada--corta">
+        <p class="portada__etiqueta">API pública · solo lectura</p>
+        <h1 class="portada__titulo">Tus fotos,<br />también como datos</h1>
+        <p class="portada__subtitulo">
+          Cada despliegue publica un conjunto de endpoints JSON estáticos con todas las imágenes y sus
+          metadatos. Sin claves, sin cuotas y sin funciones serverless: se sirven desde el CDN.
+        </p>
+        <div class="portada__meta">
+          <span id="resumen-api">Cargando endpoints…</span>
+          <span class="punto" aria-hidden="true">·</span>
+          <span>Actualizado en cada <code>push</code></span>
+        </div>
+      </section>
+
+      <section class="doc-seccion">
+        <h2 class="doc-titulo">URL base</h2>
+        <div class="doc-url">
+          <code id="url-base">—</code>
+          <button class="boton boton--chico" id="copiar-base" type="button">Copiar</button>
+        </div>
+        <p class="doc-nota">
+          Funciona con cualquier origen: el dominio de Vercel, un dominio propio o <code>localhost:5173</code>.
+          Las rutas empiezan por <code>/datos/</code> y las imágenes por <code>/fotos/</code>.
+        </p>
+        <p class="doc-nota doc-nota--aviso">
+          <strong>¿Por qué <code>/datos</code> y no <code>/api</code>?</strong> Vercel reserva la carpeta
+          <code>/api</code> de la raíz para funciones serverless, así que los archivos estáticos que se
+          colocan ahí no se sirven. Con <code>/datos/</code> los endpoints son archivos JSON normales
+          servidos desde el CDN.
+        </p>
+      </section>
+
+      <section class="doc-seccion">
+        <h2 class="doc-titulo">Endpoints</h2>
+        <div class="doc-tabla" role="table" aria-label="Endpoints disponibles">
+          <div class="doc-fila doc-fila--cabecera" role="row">
+            <span role="columnheader">Método</span>
+            <span role="columnheader">Ruta</span>
+            <span role="columnheader">Devuelve</span>
+          </div>
+          <div class="doc-fila" role="row">
+            <span role="cell"><span class="metodo">GET</span></span>
+            <span role="cell"><a href="datos/albumes.json" target="_blank" rel="noopener"><code>/datos/albumes.json</code></a></span>
+            <span role="cell">Índice: álbumes con su <code>slug</code>, totales y lista de endpoints</span>
+          </div>
+          <div class="doc-fila" role="row">
+            <span role="cell"><span class="metodo">GET</span></span>
+            <span role="cell"><a href="datos/fotos.json" target="_blank" rel="noopener"><code>/datos/fotos.json</code></a></span>
+            <span role="cell">Todas las fotos con título, álbum, etiquetas, dimensiones y URL de imagen</span>
+          </div>
+          <div class="doc-fila" role="row">
+            <span role="cell"><span class="metodo">GET</span></span>
+            <span role="cell"><code>/datos/albumes/&lt;slug&gt;.json</code></span>
+            <span role="cell">Solo las fotos de un álbum, p. ej. <a href="datos/albumes/general.json" target="_blank" rel="noopener"><code>/datos/albumes/general.json</code></a></span>
+          </div>
+          <div class="doc-fila" role="row">
+            <span role="cell"><span class="metodo">GET</span></span>
+            <span role="cell"><code>/fotos/&lt;ruta&gt;</code></span>
+            <span role="cell">El archivo de imagen original (JPG, PNG, WebP, AVIF…)</span>
+          </div>
+        </div>
+        <div class="doc-albumes" id="doc-albumes"></div>
+      </section>
+
+      <section class="doc-seccion">
+        <h2 class="doc-titulo">Formato de una foto</h2>
+        <pre class="doc-codigo" id="ejemplo-json"><code>Cargando…</code></pre>
+      </section>
+
+      <section class="doc-seccion">
+        <h2 class="doc-titulo">Consumirlo</h2>
+        <div class="doc-columnas">
+          <div>
+            <h3 class="doc-subtitulo">JavaScript / React</h3>
+<pre class="doc-codigo"><code>const base = 'https://tu-dominio.vercel.app';
+
+const { fotos } = await fetch(base + '/datos/fotos.json')
+  .then((r) =&gt; r.json());
+
+// fotos[0] =&gt; { id, titulo, album, imagen, etiquetas, ancho, alto, … }
+&lt;img src={base + fotos[0].imagen} alt={fotos[0].titulo} /&gt;</code><button class="doc-copiar" data-copiar="js" type="button">Copiar</button></pre>
+          </div>
+
+          <div>
+            <h3 class="doc-subtitulo">cURL</h3>
+<pre class="doc-codigo"><code>curl https://tu-dominio.vercel.app/datos/fotos.json
+curl https://tu-dominio.vercel.app/datos/albumes/texturas.json</code><button class="doc-copiar" data-copiar="curl" type="button">Copiar</button></pre>
+          </div>
+
+          <div>
+            <h3 class="doc-subtitulo">Filtrar por álbum o etiqueta</h3>
+<pre class="doc-codigo"><code>const res = await fetch('/datos/fotos.json');
+const { fotos } = await res.json();
+
+const texturas = fotos.filter((f) =&gt; f.album === 'Texturas');
+const mar     = fotos.filter((f) =&gt; f.etiquetas.includes('mar'));
+const ultima  = fotos
+  .filter((f) =&gt; f.fecha)
+  .sort((a, b) =&gt; b.fecha.localeCompare(a.fecha))[0];</code><button class="doc-copiar" data-copiar="filtros" type="button">Copiar</button></pre>
+          </div>
+
+          <div>
+            <h3 class="doc-subtitulo">Open Graph / redes</h3>
+<pre class="doc-codigo"><code>&lt;meta property="og:image"
+      content="https://tu-dominio.vercel.app/fotos/01-dunas-al-amanecer.jpg" /&gt;</code><button class="doc-copiar" data-copiar="og" type="button">Copiar</button></pre>
+          </div>
+        </div>
+      </section>
+
+      <section class="doc-seccion">
+        <h2 class="doc-titulo">Buenas prácticas</h2>
+        <ul class="doc-lista">
+          <li>
+            <strong>Son archivos, no una base de datos.</strong> Se regeneran en cada build
+            (<code>npm run build</code>) leyendo lo que haya en <code>fotos/</code>. No hay escritura en caliente.
+          </li>
+          <li>
+            <strong>Cachea con criterio.</strong> Los JSON se sirven con
+            <code>max-age=0, must-revalidate</code> para que un push se vea al instante; añade tu propia
+            caché si haces muchas peticiones.
+          </li>
+          <li>
+            <strong>¿Necesitas consultas dinámicas?</strong> Este API es de solo lectura y no filtra en el
+            servidor: pide <code>fotos.json</code> y filtra en el cliente, o crea una función propia en
+            <code>/api/</code> (Vercel Functions) si de verdad necesitas cómputo en el servidor.
+          </li>
+          <li>
+            <strong>Los metadatos se editan en <code>fotos/info.json</code>.</strong> Títulos, descripciones,
+            etiquetas, fechas y orden alimentan directo estos endpoints.
+          </li>
+          <li>
+            <strong>CORS abierto.</strong> Al ser archivos estáticos servidos por Vercel, cualquier frontend
+            puede hacer <code>fetch</code> de ellos (solo lectura).
+          </li>
+          <li>
+            <strong>No hay datos privados.</strong> Todo lo publicado aquí es público: no subas fotos que no
+            quieras exponer.
+          </li>
+          <li>
+            <strong>Si mueves o renombras una foto, cambia su URL.</strong> Usa el <code>id</code> (ruta relativa)
+            como clave estable solo si controlas los renombrados.
+          </li>
+        </ul>
+      </section>
+    </main>
+
+    <footer class="pie">
+      <a href="./">Galería</a>
+      <span class="pie__separador" aria-hidden="true">·</span>
+      <a href="https://github.com/lyanvalentinmail-prog/Velirius-storage" target="_blank" rel="noopener">Repositorio</a>
+      <span class="pie__separador" aria-hidden="true">·</span>
+      <span>JSON estático generado en el build</span>
+    </footer>
+
+    <script type="module" src="assets/api.js"></script>
+  </body>
+</html>
