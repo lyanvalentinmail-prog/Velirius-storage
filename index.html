@@ -3,189 +3,77 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#0e0d0c" media="(prefers-color-scheme: dark)" />
-    <meta name="theme-color" content="#f6f3ee" media="(prefers-color-scheme: light)" />
-    <title>Galería</title>
-    <meta name="description" content="Galería de fotos personal." />
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="Galería" id="og-titulo" />
-    <meta property="og:description" content="Un archivo visual de luz, textura y lugares." id="og-descripcion" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="assets/favicon.svg" />
-    <link rel="stylesheet" href="assets/estilos.css" />
-    <script>
-      // Evita el parpadeo de tema: aplica la preferencia antes de pintar.
-      (function () {
-        try {
-          var guardado = localStorage.getItem('tema');
-          var sistema = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'oscuro' : 'claro';
-          document.documentElement.dataset.tema = guardado || sistema;
-        } catch (e) {
-          document.documentElement.dataset.tema = 'claro';
-        }
-      })();
-    </script>
+    <title>Velirius API · endpoints funcionales</title>
+    <meta name="description" content="API REST pública con endpoints funcionales: canvas, anime, download, IA, reactions, search y tools. Lista para Vercel y Render." />
+    <meta name="theme-color" content="#f7f7f5" />
+    <meta property="og:title" content="Velirius API" />
+    <meta property="og:description" content="Routers y endpoints funcionales. Sin token requerido." />
+    <meta property="og:image" content="/assets/canvas/banner.jpg" />
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/assets/api-ui.css" />
   </head>
   <body>
-    <a class="saltar" href="#galeria">Saltar a la galería</a>
+    <div class="fondo-puntos" aria-hidden="true"></div>
 
-    <header class="cabecera">
-      <a class="marca" href="./" aria-label="Inicio">
-        <span class="marca__punto" aria-hidden="true"></span>
-        <span id="marca-texto">Galería</span>
-      </a>
+    <main class="marco" id="marco">
+      <div class="tarjeta" id="tarjeta">
+        <header class="cabecera-tarjeta">
+          <div class="logo" id="logo">
+            <span class="logo__marca">V</span>
+            <span class="logo__texto">VELIRIUS</span>
+          </div>
+          <div class="acciones-superiores">
+            <button class="icono" id="boton-tema" type="button" title="Cambiar tema" aria-label="Cambiar tema">◐</button>
+            <button class="icono" id="boton-buscar" type="button" title="Buscar ( / )" aria-label="Buscar">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M16 16l4.6 4.6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+        </header>
 
-      <div class="acciones">
-        <label class="buscador" for="buscador">
-          <svg viewBox="0 0 24 24" aria-hidden="true" class="buscador__icono">
-            <circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.7" />
-            <path d="M16 16l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
-          </svg>
-          <input id="buscador" type="search" placeholder="Buscar fotos…" autocomplete="off" spellcheck="false" />
-          <kbd class="buscador__atajo" aria-hidden="true">/</kbd>
-        </label>
-
-        <button class="boton-icono" id="boton-tema" type="button" aria-label="Cambiar tema" title="Cambiar tema">
-          <svg viewBox="0 0 24 24" aria-hidden="true" class="icono-luna">
-            <path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
-          </svg>
-          <svg viewBox="0 0 24 24" aria-hidden="true" class="icono-sol">
-            <circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.7" />
-            <path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.2 5.2l1.6 1.6M17.2 17.2l1.6 1.6M18.8 5.2l-1.6 1.6M6.8 17.2l-1.6 1.6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
-          </svg>
-        </button>
-
-        <a class="boton-icono boton-icono--api" href="api-docs" aria-label="API JSON" title="API JSON">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M8.5 4.5L4 12l4.5 7.5M15.5 4.5L20 12l-4.5 7.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
-        </a>
-
-        <button class="boton-icono boton-icono--ayuda" id="boton-ayuda" type="button" aria-label="Cómo añadir fotos" title="Cómo añadir fotos">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7" />
-            <path d="M9.6 9.4a2.5 2.5 0 114 2.1c-.8.6-1.6 1-1.6 2.1" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
-            <circle cx="12" cy="17" r="1" fill="currentColor" />
-          </svg>
-        </button>
-      </div>
-    </header>
-
-    <main>
-      <section class="portada">
-        <p class="portada__etiqueta" id="portada-etiqueta">Archivo fotográfico</p>
-        <h1 class="portada__titulo" id="titulo-sitio">Galería</h1>
-        <p class="portada__subtitulo" id="subtitulo-sitio"></p>
-        <div class="portada__meta">
-          <span id="contador">Cargando…</span>
-          <span class="punto" aria-hidden="true">·</span>
-          <button class="enlace-boton" id="abrir-ayuda" type="button">Cómo añadir fotos</button>
+        <div id="contenido" class="contenido" aria-live="polite">
+          <div class="cargando"><span></span><span></span><span></span> sincronizando…</div>
         </div>
-      </section>
 
-      <nav class="filtros" id="filtros" aria-label="Filtrar por álbum"></nav>
-
-      <div class="cargando" id="cargando" role="status">
-        <span class="cargando__punto"></span><span class="cargando__punto"></span><span class="cargando__punto"></span>
+        <footer class="pie-tarjeta">
+          <span>© 2026 &nbsp;|&nbsp; VELIRIUS STORE</span>
+          <span class="pie-tarjeta__enlaces">
+            <a href="#/docs">Docs</a>
+            <a href="/api/openapi.json" target="_blank" rel="noopener">OpenAPI</a>
+            <a href="/galeria.html">Galería</a>
+          </span>
+        </footer>
       </div>
-
-      <section class="galeria" id="galeria" aria-label="Fotos"></section>
-
-      <div class="vacio" id="vacio" hidden>
-        <svg viewBox="0 0 48 48" aria-hidden="true">
-          <rect x="6" y="10" width="36" height="28" rx="4" fill="none" stroke="currentColor" stroke-width="2" />
-          <circle cx="17" cy="20" r="3" fill="none" stroke="currentColor" stroke-width="2" />
-          <path d="M8 33l9-8 6 5 6-6 11 9" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
-        </svg>
-        <h2 id="vacio-titulo">Todavía no hay fotos</h2>
-        <p id="vacio-texto">
-          Añade imágenes dentro de la carpeta <code>fotos/</code> del repositorio y haz <em>push</em>.
-          Vercel volverá a construir la galería automáticamente.
-        </p>
-        <button class="boton" id="vacio-ayuda" type="button">Ver instrucciones</button>
-      </div>
+      <p class="nota-fuera">Diseñado a partir de las referencias de Google Drive · Desplegable en Vercel y Render</p>
     </main>
 
-    <footer class="pie">
-      <span id="pie-autor"></span>
-      <span class="pie__separador" aria-hidden="true">·</span>
-      <a id="pie-repo" href="#" target="_blank" rel="noopener">Repositorio</a>
-      <span class="pie__separador" aria-hidden="true">·</span>
-      <a href="api-docs">API / JSON</a>
-      <span class="pie__separador" aria-hidden="true">·</span>
-      <a id="pie-enlace" href="#" target="_blank" rel="noopener" hidden></a>
-    </footer>
-
-    <!-- Visor de fotos -->
-    <dialog class="visor" id="visor" aria-label="Visor de fotos">
-      <div class="visor__barra">
-        <span class="visor__contador" id="visor-contador"></span>
-        <div class="visor__acciones">
-          <a class="boton-icono" id="visor-descargar" href="#" download aria-label="Descargar foto" title="Descargar foto">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 3v11m0 0l-4-4m4 4l4-4M4 19h16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-          </a>
-          <button class="boton-icono" id="visor-cerrar" type="button" aria-label="Cerrar" title="Cerrar (Esc)">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-            </svg>
-          </button>
+    <!-- Modal del playground -->
+    <div class="modal" id="modal" hidden>
+      <div class="modal__fondo" data-cerrar></div>
+      <div class="modal__caja" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
+        <div class="modal__cabeza">
+          <div>
+            <p class="modal__etiqueta" id="modal-categoria">ENDPOINT</p>
+            <h2 id="modal-titulo">/api/…</h2>
+          </div>
+          <button class="icono" id="modal-cerrar" type="button" aria-label="Cerrar">✕</button>
+        </div>
+        <p class="modal__descripcion" id="modal-descripcion"></p>
+        <form id="formulario" class="formulario"></form>
+        <div class="modal__acciones">
+          <button class="boton boton--negro" id="boton-run" type="button">RUN ▶</button>
+          <button class="boton" id="boton-copiar" type="button">Copiar URL</button>
+          <button class="boton" id="boton-curl" type="button">Copiar cURL</button>
+        </div>
+        <div class="resultado" id="resultado">
+          <div class="resultado__barra">
+            <span id="resultado-estado">LISTO</span>
+            <span id="resultado-tiempo"></span>
+          </div>
+          <div class="resultado__cuerpo" id="resultado-cuerpo">Pulsa RUN para ejecutar el endpoint.</div>
         </div>
       </div>
+    </div>
 
-      <button class="visor__flecha visor__flecha--izq" id="visor-anterior" type="button" aria-label="Foto anterior">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
-      </button>
-      <button class="visor__flecha visor__flecha--der" id="visor-siguiente" type="button" aria-label="Foto siguiente">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 5.5L16 12l-6.5 6.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" /></svg>
-      </button>
-
-      <figure class="visor__figura">
-        <img class="visor__imagen" id="visor-imagen" alt="" />
-        <figcaption class="visor__leyenda">
-          <h2 id="visor-titulo"></h2>
-          <p id="visor-descripcion"></p>
-          <span class="visor__album" id="visor-album"></span>
-        </figcaption>
-      </figure>
-    </dialog>
-
-    <!-- Instrucciones para subir fotos -->
-    <dialog class="ayuda" id="ayuda" aria-labelledby="ayuda-titulo">
-      <div class="ayuda__cabecera">
-        <h2 id="ayuda-titulo">Añadir fotos</h2>
-        <button class="boton-icono" id="ayuda-cerrar" type="button" aria-label="Cerrar" title="Cerrar (Esc)">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-          </svg>
-        </button>
-      </div>
-      <ol class="ayuda__pasos">
-        <li>
-          <strong>Entra a la carpeta de fotos en GitHub.</strong>
-          <p>Sube las imágenes a <code id="ayuda-ruta">fotos/</code>. Crea subcarpetas para separar álbumes: <code>fotos/viajes/</code>, <code>fotos/retratos/</code>…</p>
-        </li>
-        <li>
-          <strong>Arrastra los archivos y confirma.</strong>
-          <p>En GitHub pulsa <em>Add file → Upload files</em>, suelta las fotos y haz <em>Commit changes</em>.</p>
-        </li>
-        <li>
-          <strong>Espera unos segundos.</strong>
-          <p>Vercel detecta el cambio, ejecuta <code>npm run build</code> y publica la galería con las fotos nuevas. No hay que tocar código.</p>
-        </li>
-      </ol>
-      <p class="ayuda__nota">
-        Opcional: añade títulos y descripciones en <code>fotos/info.json</code>. Todo lo demás se genera solo.
-        Las fotos también quedan disponibles como JSON en <a href="api-docs">/api-docs</a>.
-      </p>
-      <div class="ayuda__acciones">
-        <a class="boton boton--principal" id="ayuda-subir" href="https://github.com" target="_blank" rel="noopener">Subir fotos a GitHub</a>
-        <button class="boton" id="ayuda-copiar" type="button">Copiar instrucciones</button>
-      </div>
-    </dialog>
-
-    <script type="module" src="assets/app.js"></script>
+    <script type="module" src="/assets/api-ui.js"></script>
   </body>
 </html>

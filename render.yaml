@@ -1,0 +1,22 @@
+# Blueprint de Render: https://render.com/docs/blueprint-spec
+# En Render: New > Blueprint > conecta este repositorio. Render detecta este archivo.
+services:
+  - type: web
+    name: velirius-api
+    runtime: node
+    plan: free
+    region: oregon
+    healthCheckPath: /api/health
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: API_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: DEEPSEEK_API_KEY
+        sync: false

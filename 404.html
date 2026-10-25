@@ -3,18 +3,22 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Página no encontrada · Galería</title>
+    <title>Página no encontrada · Velirius API</title>
     <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="/assets/estilos.css" />
+    <link rel="stylesheet" href="/assets/api-ui.css" />
   </head>
   <body>
-    <main style="min-height: 100dvh; display: grid; place-content: center; justify-items: center; gap: 0.6rem; text-align: center">
-      <p class="portada__etiqueta" style="margin: 0">Error 404</p>
-      <h1 class="portada__titulo" style="font-size: clamp(3rem, 12vw, 6rem)">Nada por aquí</h1>
-      <p style="color: var(--tinta-suave); max-width: 40ch; margin: 0 0 1rem">
-        Esta página no existe o la foto se movió de sitio.
-      </p>
-      <a class="boton boton--principal" href="/" style="margin-top: 0">Volver a la galería</a>
+    <main class="marco">
+      <div class="tarjeta" style="text-align:center;padding:40px 24px">
+        <p class="portada__sub" style="margin-bottom:10px">ERROR 404</p>
+        <h1 style="font-family:Georgia,serif;letter-spacing:.16em;font-size:clamp(2rem,8vw,3.4rem);margin:0 0 12px">NADA POR AQUÍ</h1>
+        <p style="font-size:12px;line-height:1.8;color:var(--suave);max-width:38ch;margin:0 auto 22px">
+          Esa ruta no existe. Prueba el índice del API o vuelve a la documentación.
+        </p>
+        <a class="boton boton--negro" href="/#/home">Volver al inicio</a>
+        <a class="boton" href="/api" style="margin-left:8px">Ver /api</a>
+        <a class="boton" href="/galeria.html" style="margin-left:8px">Galería</a>
+      </div>
     </main>
   </body>
 </html>
