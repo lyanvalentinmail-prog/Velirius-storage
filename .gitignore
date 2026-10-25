@@ -1,5 +1,6 @@
-# Manifiesto generado automáticamente por scripts/generar-galeria.mjs
+# Generados automáticamente por scripts/generar-galeria.mjs
 galeria.json
+datos/
 
 # Vercel
 .vercel

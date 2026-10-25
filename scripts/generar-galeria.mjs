@@ -10,7 +10,7 @@
  * Uso:  node scripts/generar-galeria.mjs
  * Sin dependencias externas.
  */
-import { readdir, readFile, writeFile, stat, open } from 'node:fs/promises';
+import { readdir, readFile, writeFile, stat, open, mkdir, rm } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -66,6 +66,12 @@ function prettificar(nombre) {
 
 /** URL segura conservando las barras. */
 const aUrl = (ruta) => ruta.split('/').map(encodeURIComponent).join('/');
+
+/** Convierte un texto en un nombre de archivo/URL: "Playa 2026" -> "playa-2026" */
+const aSlug = (texto) =>
+  normalizar(texto)
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '') || 'album';
 
 async function listarArchivos(dir, base = '') {
   let entradas;
@@ -173,6 +179,97 @@ async function medir(rutaAbsoluta) {
 }
 
 /* ------------------------------------------------------------------ */
+/* API JSON estática (endpoints sin servidor)                          */
+/* ------------------------------------------------------------------ */
+
+/** Ruta pública de una foto: "/fotos/x.jpg" o absoluta si hay `urlBase`. */
+function rutaPublica(ruta, config) {
+  const limpia = `/${String(ruta).replace(/^\/+/, '')}`;
+  const base = String(config.urlBase || '').replace(/\/+$/, '');
+  return base ? `${base}${encodeURI(limpia)}` : encodeURI(limpia);
+}
+
+/** Objeto de foto tal y como se publica en la API. */
+function fotoApi(foto, config) {
+  return {
+    id: foto.id,
+    titulo: foto.titulo,
+    descripcion: foto.descripcion || null,
+    album: foto.album,
+    etiquetas: foto.etiquetas,
+    fecha: foto.fecha || null,
+    archivo: foto.archivo,
+    imagen: rutaPublica(foto.ruta, config),
+    ancho: foto.ancho || null,
+    alto: foto.alto || null,
+    peso: foto.peso,
+    destacada: foto.destacada,
+  };
+}
+
+/**
+ * Escribe los endpoints estáticos en /datos:
+ *   datos/fotos.json          · todas las fotos
+ *   datos/albumes.json        · índice de álbumes
+ *   datos/albumes/<slug>.json · fotos de un álbum
+ *
+ * Son archivos JSON servidos desde el CDN: sin funciones ni cold starts.
+ * Importante: NO se usa /api porque Vercel reserva esa carpeta en la raíz
+ * para funciones serverless y los archivos estáticos de dentro no se sirven.
+ */
+async function escribirApi(salida, config) {
+  const dir = path.join(RAIZ, 'datos');
+  await rm(dir, { recursive: true, force: true });
+  await mkdir(path.join(dir, 'albumes'), { recursive: true });
+
+  const fotos = salida.fotos.map((foto) => fotoApi(foto, config));
+  const generado = salida.generado;
+
+  const slugsUsados = new Set();
+  const albumes = salida.albumes.map((album) => {
+    const base = aSlug(album.nombre);
+    let slug = base;
+    let intento = 2;
+    while (slugsUsados.has(slug)) slug = `${base}-${intento++}`;
+    slugsUsados.add(slug);
+    return { ...album, slug };
+  });
+
+  const escribir = async (ruta, datos) => {
+    await writeFile(path.join(RAIZ, ruta), `${JSON.stringify(datos, null, 2)}\n`);
+  };
+
+  await escribir('datos/fotos.json', { generado, total: fotos.length, albumes, fotos });
+  await escribir('datos/albumes.json', {
+    generado,
+    sitio: {
+      titulo: config.titulo,
+      autor: config.autor || null,
+      repositorio: config.repositorio || null,
+    },
+    total: fotos.length,
+    albumes,
+    endpoints: {
+      fotos: '/datos/fotos.json',
+      albumes: '/datos/albumes.json',
+      album: '/datos/albumes/{slug}.json',
+    },
+  });
+
+  for (const album of albumes) {
+    const delAlbum = fotos.filter((foto) => foto.album === album.nombre);
+    await escribir(`datos/albumes/${album.slug}.json`, {
+      generado,
+      album: { nombre: album.nombre, slug: album.slug },
+      total: delAlbum.length,
+      fotos: delAlbum,
+    });
+  }
+
+  return { total: fotos.length, albumes: albumes.length };
+}
+
+/* ------------------------------------------------------------------ */
 /* Programa principal                                                  */
 /* ------------------------------------------------------------------ */
 async function main() {
@@ -259,6 +356,8 @@ async function main() {
 
   await writeFile(path.join(RAIZ, 'galeria.json'), `${JSON.stringify(salida, null, 2)}\n`);
 
+  const api = await escribirApi(salida, config);
+
   const detalle = albumes.map((album) => `${album.nombre} (${album.total})`).join(', ');
   log(
     fotos.length === 0
@@ -266,6 +365,7 @@ async function main() {
       : `${fotos.length} foto(s) · ${albumes.length} álbum(es)${detalle ? `: ${detalle}` : ''}`
   );
   log('escrito galeria.json');
+  log(`escrita API: ${api.total} foto(s) y ${api.albumes} endpoint(s) de álbum en /datos`);
 }
 
 main().catch((error) => {

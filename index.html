@@ -56,6 +56,12 @@
           </svg>
         </button>
 
+        <a class="boton-icono boton-icono--api" href="api-docs" aria-label="API JSON" title="API JSON">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M8.5 4.5L4 12l4.5 7.5M15.5 4.5L20 12l-4.5 7.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </a>
+
         <button class="boton-icono boton-icono--ayuda" id="boton-ayuda" type="button" aria-label="Cómo añadir fotos" title="Cómo añadir fotos">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7" />
@@ -105,6 +111,8 @@
       <span id="pie-autor"></span>
       <span class="pie__separador" aria-hidden="true">·</span>
       <a id="pie-repo" href="#" target="_blank" rel="noopener">Repositorio</a>
+      <span class="pie__separador" aria-hidden="true">·</span>
+      <a href="api-docs">API / JSON</a>
       <span class="pie__separador" aria-hidden="true">·</span>
       <a id="pie-enlace" href="#" target="_blank" rel="noopener" hidden></a>
     </footer>
@@ -170,6 +178,7 @@
       </ol>
       <p class="ayuda__nota">
         Opcional: añade títulos y descripciones en <code>fotos/info.json</code>. Todo lo demás se genera solo.
+        Las fotos también quedan disponibles como JSON en <a href="api-docs">/api-docs</a>.
       </p>
       <div class="ayuda__acciones">
         <a class="boton boton--principal" id="ayuda-subir" href="https://github.com" target="_blank" rel="noopener">Subir fotos a GitHub</a>

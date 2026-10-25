@@ -9,6 +9,7 @@ y la foto aparece.
 - 📁 Cada subcarpeta de `fotos/` es un álbum; los títulos salen del nombre del archivo
 - ⚡ Cero dependencias: `git push` y listo, sin instalar nada
 - 🔗 Enlaces directos a cada foto (`/#foto=viajes/lisboa.jpg`)
+- 🧩 **API JSON** generada en el build: `/datos/fotos.json`, `/datos/albumes.json` y `/datos/albumes/<slug>.json`
 - 🚀 Listo para Vercel (también funciona en GitHub Pages, Netlify o cualquier hosting estático)
 
 ---
@@ -114,7 +115,65 @@ npx serve .
 
 ---
 
-## 4. Personalizar
+## 4. Usar las fotos en un API / otros proyectos
+
+Cada build publica JSON estático con todas las fotos y sus metadatos. **No hay funciones, claves ni
+base de datos**: son archivos servidos por el CDN, así que también funcionan desde cualquier frontend.
+
+| Endpoint | Devuelve |
+| --- | --- |
+| `/datos/albumes.json` | Índice: álbumes con su `slug`, totales y lista de endpoints |
+| `/datos/fotos.json` | Todas las fotos con título, álbum, etiquetas, fecha, dimensiones y URL |
+| `/datos/albumes/<slug>.json` | Solo las fotos de un álbum (`/datos/albumes/texturas.json`) |
+| `/datos/…` (imágenes en `/fotos/…`) | El archivo original: JPG, PNG, WebP, AVIF… |
+
+Ejemplo de una foto en `fotos.json`:
+
+```json
+{
+  "id": "01-dunas-al-amanecer.jpg",
+  "titulo": "Dunas al amanecer",
+  "descripcion": "Primera luz sobre la arena fría.",
+  "album": "General",
+  "etiquetas": ["arena", "amanecer"],
+  "fecha": "2026-01-18",
+  "archivo": "01-dunas-al-amanecer.jpg",
+  "imagen": "/fotos/01-dunas-al-amanecer.jpg",
+  "ancho": 1600,
+  "alto": 1067,
+  "peso": 233637,
+  "destacada": true
+}
+```
+
+Consumirlo desde otra web o app:
+
+```js
+const base = 'https://tu-dominio.vercel.app';
+const { fotos } = await fetch(`${base}/datos/fotos.json`).then((r) => r.json());
+
+const texturas = fotos.filter((f) => f.album === 'Texturas');
+document.querySelector('img').src = base + fotos[0].imagen;
+```
+
+```bash
+curl https://tu-dominio.vercel.app/datos/fotos.json
+curl https://tu-dominio.vercel.app/datos/albumes/texturas.json
+```
+
+La documentación viva (con tus álbumes reales) está en **`/api-docs`** dentro del propio sitio.
+
+> **¿Por qué `/datos` y no `/api`?** Vercel reserva la carpeta `/api` de la raíz para funciones
+> serverless y no sirve los archivos estáticos que haya dentro. Si necesitas lógica de servidor
+> (subir fotos, filtrar, autenticación), puedes añadir tus propias funciones en `/api` sin conflicto:
+> los JSON seguirán en `/datos`.
+>
+> Si quieres URLs absolutas de las imágenes dentro del JSON (útil para consumirlo desde apps externas),
+> rellena `urlBase` en `galeria.config.json` con `https://tu-dominio.vercel.app`.
+
+---
+
+## 5. Personalizar
 
 Todo lo visible se controla desde [`galeria.config.json`](galeria.config.json):
 
@@ -128,19 +187,21 @@ Todo lo visible se controla desde [`galeria.config.json`](galeria.config.json):
   "rama": "main",
   "carpetaFotos": "fotos",
   "enlace": "https://instagram.com/tu-usuario",
-  "textoEnlace": "Instagram"
+  "textoEnlace": "Instagram",
+  "urlBase": ""
 }
 ```
 
 - `repositorio` y `rama` alimentan el botón **“Subir fotos a GitHub”** del diálogo de ayuda,
   que abre directamente la pantalla de subida de la carpeta.
 - `enlace` añade un enlace extra en el pie (Instagram, portfolio…).
+- `urlBase` (opcional) hace que los endpoints devuelvan URLs absolutas de las imágenes.
 - Colores, tipografías y radios están como variables CSS al principio de
   [`assets/estilos.css`](assets/estilos.css).
 
 ---
 
-## 5. Estructura del proyecto
+## 6. Estructura del proyecto
 
 ```
 .
@@ -152,15 +213,17 @@ Todo lo visible se controla desde [`galeria.config.json`](galeria.config.json):
 ├── fotos/                     # ← AQUÍ van las fotos (y subcarpetas = álbumes)
 │   ├── info.json              # metadatos opcionales
 │   └── LEEME.md
+├── api-docs.html              # documentación del API (/api-docs)
+├── assets/api.js              # lógica de la página de documentación
 ├── scripts/
-│   ├── generar-galeria.mjs    # crea galeria.json recorriendo fotos/
+│   ├── generar-galeria.mjs    # crea galeria.json + datos/*.json recorriendo fotos/
 │   └── servidor-dev.mjs       # servidor local sin dependencias
 ├── galeria.config.json        # título, autor, enlaces
 ├── vercel.json                # configuración de despliegue
 └── package.json               # scripts dev / build
 ```
 
-`galeria.json` **se genera solo** en cada build (está en `.gitignore`); no lo edites a mano.
+`galeria.json` y `datos/` **se generan solos** en cada build (están en `.gitignore`); no los edites a mano.
 Lee las dimensiones de cada imagen para reservar el espacio y evitar saltos de diseño, y no necesita
 ninguna librería externa.
 
@@ -175,7 +238,7 @@ ninguna librería externa.
 
 ---
 
-## 6. Preguntas frecuentes
+## 7. Preguntas frecuentes
 
 **¿Se puede subir una foto desde la propia web?**
 No: la galería es 100 % estática, así que las fotos se suben al repositorio. A cambio es gratis,
@@ -196,6 +259,11 @@ No subas material que no quieras publicar.
 Las que quieras: el manifiesto solo guarda rutas y dimensiones. A partir de varios cientos, usa
 imágenes bien comprimidas para que cargue rápido.
 
+**¿Puedo usar las fotos en mi API o en otra app?**
+Sí: `/datos/fotos.json` y `/datos/albumes/<slug>.json` son JSON estáticos de solo lectura, y cada
+imagen tiene URL directa en `/fotos/…`. Ver la sección 4.
+
 **¿Funciona en GitHub Pages?**
 Sí, pero GitHub Pages no ejecuta `npm run build`; tendrías que hacer *commit* de `galeria.json`
-(quítalo del `.gitignore`) o publicar con una GitHub Action. En Vercel no hace falta nada de eso.
+(quítalo del `.gitignore`, junto con `datos/`) o publicar con una GitHub Action. En Vercel no hace
+falta nada de eso.

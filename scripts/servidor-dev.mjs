@@ -59,10 +59,21 @@ const servidor = createServer(async (req, res) => {
       return;
     }
 
-    let info;
-    try {
-      info = await stat(destino);
-    } catch {
+    // Resolvemos la ruta: archivo exacto, /ruta -> ruta.html (rutas limpias) o 404.
+    let archivo = null;
+    let info = await stat(destino).catch(() => null);
+
+    if (info?.isDirectory()) {
+      archivo = path.join(destino, 'index.html');
+      if (!(await stat(archivo).catch(() => null))) archivo = null;
+    } else if (info) {
+      archivo = destino;
+    } else if (!path.extname(destino)) {
+      archivo = `${destino}.html`;
+      if (!(await stat(archivo).catch(() => null))) archivo = null;
+    }
+
+    if (!archivo) {
       const pagina404 = await readFile(path.join(RAIZ, '404.html')).catch(() => null);
       res.writeHead(404, { 'Content-Type': 'text/html; charset=utf-8' });
       res.end(
@@ -72,7 +83,6 @@ const servidor = createServer(async (req, res) => {
       return;
     }
 
-    const archivo = info.isDirectory() ? path.join(destino, 'index.html') : destino;
     const contenido = await readFile(archivo);
     const extension = path.extname(archivo).toLowerCase();
 
