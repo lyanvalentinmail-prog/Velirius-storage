@@ -1,15 +1,22 @@
 {
-  "name": "velirius-galeria",
+  "name": "velirius-api",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Galería de fotos estática: sube imágenes a /fotos, haz push y Vercel la publica.",
+  "description": "API REST pública con endpoints funcionales + web de documentación. Desplegable en Vercel y Render.",
+  "main": "server.mjs",
   "scripts": {
-    "dev": "node scripts/servidor-dev.mjs",
-    "build": "node scripts/generar-galeria.mjs",
-    "galeria": "node scripts/generar-galeria.mjs"
+    "dev": "node server.mjs",
+    "start": "node server.mjs",
+    "build": "node scripts/generar-galeria.mjs && node scripts/importar-plantillas.mjs",
+    "plantillas": "node scripts/importar-plantillas.mjs",
+    "galeria": "node scripts/generar-galeria.mjs",
+    "test": "node scripts/pruebas.mjs"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
+  },
+  "optionalDependencies": {
+    "sharp": "^0.35.0"
   }
 }

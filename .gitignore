@@ -2,6 +2,9 @@
 galeria.json
 datos/
 
+# Descargas temporales de Google Drive
+google_drive/
+
 # Vercel
 .vercel
 
@@ -10,3 +13,5 @@ node_modules/
 .DS_Store
 Thumbs.db
 *.log
+.env
+.env.local

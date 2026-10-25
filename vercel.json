@@ -1,50 +1,49 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
-  "buildCommand": "node scripts/generar-galeria.mjs",
-  "installCommand": "echo \"Sin dependencias: no hace falta instalar nada\"",
+  "buildCommand": "npm run build",
+  "installCommand": "npm install",
   "outputDirectory": ".",
   "cleanUrls": true,
   "trailingSlash": false,
+  "functions": {
+    "api/*.mjs": {
+      "maxDuration": 30
+    }
+  },
+  "rewrites": [
+    { "source": "/home", "destination": "/index.html" },
+    { "source": "/docs", "destination": "/index.html" },
+    { "source": "/anime", "destination": "/index.html" },
+    { "source": "/canvas", "destination": "/index.html" },
+    { "source": "/download", "destination": "/index.html" },
+    { "source": "/ia", "destination": "/index.html" },
+    { "source": "/reactions", "destination": "/index.html" },
+    { "source": "/search", "destination": "/index.html" },
+    { "source": "/tools", "destination": "/index.html" },
+    { "source": "/sistema", "destination": "/index.html" }
+  ],
   "headers": [
     {
-      "source": "/fotos/(.*)",
+      "source": "/api/(.*)",
       "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=86400, stale-while-revalidate=604800"
-        }
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET, POST, OPTIONS" },
+        { "key": "Access-Control-Allow-Headers", "value": "Content-Type, Authorization, X-API-Key" },
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
       ]
     },
     {
-      "source": "/galeria.json",
+      "source": "/assets/(.*)",
       "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=0, must-revalidate"
-        }
-      ]
-    },
-    {
-      "source": "/datos/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=0, must-revalidate"
-        }
+        { "key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=604800" }
       ]
     },
     {
       "source": "/(.*)",
       "headers": [
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "Referrer-Policy",
-          "value": "strict-origin-when-cross-origin"
-        }
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
       ]
     }
   ]

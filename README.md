@@ -1,269 +1,218 @@
-# Velirius · Galería de fotos
+# ⚡ Velirius API
 
-Galería de fotos estática, **sin dependencias ni base de datos**. Para publicar una foto nueva solo
-arrastras el archivo a la carpeta `fotos/` del repositorio y haces *commit*: Vercel reconstruye la web
-y la foto aparece.
+Web de documentación + **API REST con 100 endpoints funcionales**, construida con lo que había en la
+carpeta **“Velirius api” de Google Drive**:
 
-- 🖼️ Masonry responsive, visor a pantalla completa, búsqueda y filtros por álbum
-- 🌗 Tema claro / oscuro con preferencia guardada
-- 📁 Cada subcarpeta de `fotos/` es un álbum; los títulos salen del nombre del archivo
-- ⚡ Cero dependencias: `git push` y listo, sin instalar nada
-- 🔗 Enlaces directos a cada foto (`/#foto=viajes/lisboa.jpg`)
-- 🧩 **API JSON** generada en el build: `/datos/fotos.json`, `/datos/albumes.json` y `/datos/albumes/<slug>.json`
-- 🚀 Listo para Vercel (también funciona en GitHub Pages, Netlify o cualquier hosting estático)
-
----
-
-## 1. Añadir fotos (la forma fácil, desde GitHub)
-
-1. Abre la carpeta [`fotos/`](fotos) en GitHub.
-2. Pulsa **Add file → Upload files**.
-3. Arrastra tus imágenes (puedes crear subcarpetas para álbumes: `fotos/viajes/`, `fotos/retratos/`…).
-4. Pulsa **Commit changes**.
-
-Vercel detecta el *push*, ejecuta `npm run build` y publica la galería con las fotos nuevas.
-No hay que tocar código ni volver a desplegar a mano.
-
-> También puedes hacerlo por terminal:
->
-> ```bash
-> git clone https://github.com/lyanvalentinmail-prog/Velirius-storage.git
-> cd Velirius-storage
-> cp ~/mis-fotos/*.jpg fotos/viajes/
-> git add fotos && git commit -m "Nuevas fotos" && git push
-> ```
-
-### Álbumes y títulos
-
-```
-fotos/
-├── 01-dunas-al-amanecer.jpg    → álbum "General"  · "Dunas al amanecer"
-├── viajes/
-│   ├── 01-lisboa.jpg           → álbum "Viajes"   · "Lisboa"
-│   └── 02-porto.jpg            → álbum "Viajes"   · "Porto"
-└── retratos/
-    └── ana.jpg                 → álbum "Retratos" · "Ana"
-```
-
-- El álbum es el nombre de la carpeta (`playa-2026` → **Playa 2026**).
-- El título sale del nombre del archivo sin números ni guiones.
-- El orden es alfabético/natural: usa prefijos `01-`, `02-` para controlarlo.
-- Formatos admitidos: `.jpg`, `.jpeg`, `.png`, `.webp`, `.avif`, `.gif`, `.bmp`.
-
-Para poner títulos, descripciones o portadas personalizadas, edita
-[`fotos/info.json`](fotos/info.json) (todas las claves son opcionales):
-
-```json
-{
-  "viajes/01-lisboa.jpg": {
-    "titulo": "Lisboa, tejados",
-    "descripcion": "Vista desde el mirador al atardecer.",
-    "etiquetas": ["ciudad", "atardecer"],
-    "fecha": "2026-06-14",
-    "album": "Viajes",
-    "orden": 1
-  }
-}
-```
-
-Trucos para fotos ligeras: exporta a **JPG/WebP de 1600–2400 px** de lado mayor y **menos de 500 KB**.
-Las `.heic` de iPhone no se ven en el navegador: exporta a JPG.
-
----
-
-## 2. Publicar en Vercel
-
-### Opción A · Desde la web de Vercel (recomendada)
-
-1. Entra en [vercel.com/new](https://vercel.com/new) e inicia sesión con GitHub.
-2. Importa el repositorio **`lyanvalentinmail-prog/Velirius-storage`**.
-3. No cambies nada: el proyecto ya incluye [`vercel.json`](vercel.json) con
-   *Build Command* `node scripts/generar-galeria.mjs`, *Output Directory* `.` y sin dependencias.
-4. Pulsa **Deploy**. En ~20 segundos tendrás tu URL `*.vercel.app`.
-
-A partir de ahí, **cada push a `main` (o a cualquier rama) se publica automáticamente**.
-
-### Opción B · Desde la terminal
-
-```bash
-npm i -g vercel
-vercel          # primer despliegue (preview)
-vercel --prod   # a producción
-```
-
-### Dominio propio
-
-En Vercel: **Project → Settings → Domains → Add**, escribe tu dominio y apunta el DNS que te indique
-(un `CNAME` a `cname.vercel-dns.com` o los `A` para el dominio raíz).
-
----
-
-## 3. Ver la galería en local
-
-```bash
-npm run dev      # http://localhost:5173  (regenera galeria.json al añadir fotos)
-```
-
-No hace falta `npm install`: no hay dependencias.
-
-Si prefieres un servidor estático cualquiera:
-
-```bash
-npm run build    # genera galeria.json
-npx serve .
-```
-
----
-
-## 4. Usar las fotos en un API / otros proyectos
-
-Cada build publica JSON estático con todas las fotos y sus metadatos. **No hay funciones, claves ni
-base de datos**: son archivos servidos por el CDN, así que también funcionan desde cualquier frontend.
-
-| Endpoint | Devuelve |
+| Material en Drive | Uso en el proyecto |
 | --- | --- |
-| `/datos/albumes.json` | Índice: álbumes con su `slug`, totales y lista de endpoints |
-| `/datos/fotos.json` | Todas las fotos con título, álbum, etiquetas, fecha, dimensiones y URL |
-| `/datos/albumes/<slug>.json` | Solo las fotos de un álbum (`/datos/albumes/texturas.json`) |
-| `/datos/…` (imágenes en `/fotos/…`) | El archivo original: JPG, PNG, WebP, AVIF… |
+| Documento **“Categorias”** | Define los 7 routers y sus endpoints (Anime, Canvas, Download, IA, Reactions, Search, Tools). Se añadió `sistema` para health/catálogo/OpenAPI. |
+| **CategoriaEjemplo.jpg** y **CategoriasEjemplo.jpg** | Referencia visual de la web: fondo de puntos, tarjeta redondeada, barra `STATUS / NET`, botones `VIEW` y `RUN`. Guardadas en `docs/`. |
+| Carpeta **CategoriaCanvas** (33 imágenes) | Plantillas reales de los endpoints `/api/canvas/*`, optimizadas en `assets/canvas/`. |
+| **Banners/banner.jpg** | Imagen OpenGraph del sitio. |
 
-Ejemplo de una foto en `fotos.json`:
+Todo funciona **sin base de datos, sin claves obligatorias y sin framework**: Node puro.
+El mismo manejador HTTP corre como función serverless en **Vercel** y como servicio en **Render**.
 
-```json
-{
-  "id": "01-dunas-al-amanecer.jpg",
-  "titulo": "Dunas al amanecer",
-  "descripcion": "Primera luz sobre la arena fría.",
-  "album": "General",
-  "etiquetas": ["arena", "amanecer"],
-  "fecha": "2026-01-18",
-  "archivo": "01-dunas-al-amanecer.jpg",
-  "imagen": "/fotos/01-dunas-al-amanecer.jpg",
-  "ancho": 1600,
-  "alto": 1067,
-  "peso": 233637,
-  "destacada": true
-}
+```
+8 routers · 100 endpoints · 33 imágenes generadas en las pruebas · 132 comprobaciones OK
 ```
 
-Consumirlo desde otra web o app:
+---
 
-```js
-const base = 'https://tu-dominio.vercel.app';
-const { fotos } = await fetch(`${base}/datos/fotos.json`).then((r) => r.json());
-
-const texturas = fotos.filter((f) => f.album === 'Texturas');
-document.querySelector('img').src = base + fotos[0].imagen;
-```
+## 1. Inicio rápido
 
 ```bash
-curl https://tu-dominio.vercel.app/datos/fotos.json
-curl https://tu-dominio.vercel.app/datos/albumes/texturas.json
+npm install          # sharp es opcional (solo para exportar PNG)
+npm run dev          # http://localhost:3000
+npm test             # 132 comprobaciones sobre TODOS los endpoints
+npm run build        # genera galeria.json, datos/ y src/plantillas.mjs
 ```
 
-La documentación viva (con tus álbumes reales) está en **`/api-docs`** dentro del propio sitio.
+- Web: `http://localhost:3000/#/home`
+- Índice del API: `http://localhost:3000/api`
+- Health: `http://localhost:3000/api/health`
+- OpenAPI 3.1: `http://localhost:3000/api/openapi.json`
 
-> **¿Por qué `/datos` y no `/api`?** Vercel reserva la carpeta `/api` de la raíz para funciones
-> serverless y no sirve los archivos estáticos que haya dentro. Si necesitas lógica de servidor
-> (subir fotos, filtrar, autenticación), puedes añadir tus propias funciones en `/api` sin conflicto:
-> los JSON seguirán en `/datos`.
->
-> Si quieres URLs absolutas de las imágenes dentro del JSON (útil para consumirlo desde apps externas),
-> rellena `urlBase` en `galeria.config.json` con `https://tu-dominio.vercel.app`.
+> `npm run dev` y `npm start` ejecutan `server.mjs`, **el mismo servidor que Render**.
+> No hace falta `npm install` para que arranque: solo `sharp` (opcional) es una dependencia.
 
 ---
 
-## 5. Personalizar
+## 2. Despliegue
 
-Todo lo visible se controla desde [`galeria.config.json`](galeria.config.json):
+### Vercel (recomendado)
 
-```json
-{
-  "titulo": "Velirius",
-  "subtitulo": "Un archivo visual de luz, textura y lugares.",
-  "descripcion": "Galería de fotos personal.",
-  "autor": "Velirius",
-  "repositorio": "lyanvalentinmail-prog/Velirius-storage",
-  "rama": "main",
-  "carpetaFotos": "fotos",
-  "enlace": "https://instagram.com/tu-usuario",
-  "textoEnlace": "Instagram",
-  "urlBase": ""
-}
-```
+1. Entra en [vercel.com/new](https://vercel.com/new) e importa
+   `lyanvalentinmail-prog/Velirius-storage`.
+2. No cambies nada: `vercel.json` ya define
+   `buildCommand: npm run build`, `installCommand: npm install` y `outputDirectory: .`.
+3. Pulsa **Deploy**. Cada push publica automáticamente.
 
-- `repositorio` y `rama` alimentan el botón **“Subir fotos a GitHub”** del diálogo de ayuda,
-  que abre directamente la pantalla de subida de la carpeta.
-- `enlace` añade un enlace extra en el pie (Instagram, portfolio…).
-- `urlBase` (opcional) hace que los endpoints devuelvan URLs absolutas de las imágenes.
-- Colores, tipografías y radios están como variables CSS al principio de
-  [`assets/estilos.css`](assets/estilos.css).
+Cómo está resuelto:
+
+- `api/index.mjs` → `/api` (índice).
+- `api/[...ruta].mjs` → *catch-all* para `/api/<cualquier>/<ruta>`.
+- Ambos importan `src/app.mjs`, que es un manejador `(req, res)` de Node sin framework.
+- Las plantillas de canvas se incrustan en `src/plantillas.mjs` (generado en el build), así que
+  las funciones serverless **no necesitan leer archivos del disco en tiempo de ejecución**.
+- Las rutas limpias (`/home`, `/canvas`, `/docs`…) tienen `rewrites` a `index.html`.
+
+### Render
+
+Hay un **Blueprint** listo en [`render.yaml`](render.yaml):
+
+1. Render → **New → Blueprint** → conecta el repositorio.
+2. Render detecta `render.yaml`, instala dependencias, ejecuta `npm run build` y arranca `npm start`.
+3. El health check es `/api/health`.
+
+O manualmente, en **New → Web Service**:
+
+| Campo | Valor |
+| --- | --- |
+| Runtime | Node (22) |
+| Build Command | `npm install && npm run build` |
+| Start Command | `npm start` |
+| Health Check Path | `/api/health` |
+
+También hay un [`Dockerfile`](Dockerfile) por si prefieres desplegar como contenedor.
+La guía paso a paso con solución de problemas está en [`docs/DESPLIEGUE.md`](docs/DESPLIEGUE.md).
 
 ---
 
-## 6. Estructura del proyecto
+## 3. Los endpoints
+
+Todos responden JSON con `ok`, `status` y `creator`, salvo los de imagen (SVG/PNG) y
+`/api/download/direct` (binario). No hace falta token. Hay CORS (`*`), `OPTIONS`, límite por IP
+y errores estructurados (`400`, `404`, `413`, `429`, `502`).
+
+| Router | Endpoints | Ejemplo |
+| --- | --- | --- |
+| **sistema** | 6 | `/api/health`, `/api/categories`, `/api/endpoints`, `/api/openapi.json`, `/api/echo` |
+| **anime** | 7 | `/api/anime/character?q=Naruto`, `/api/anime/waifu`, `/api/anime/gacha?semilla=velirius`, `/api/anime/avatar?nombre=Rem` |
+| **canvas** | 34 | `/api/canvas/brat?text=Hola`, `/api/canvas/quotly?username=Ana&text=…`, `/api/canvas/ship?username=A&username2=B` |
+| **download** | 12 | `/api/download/youtube?url=…`, `/api/download/aptoide?id=com.whatsapp`, `/api/download/lyric?artista=…&cancion=…`, `/api/download/direct?url=…` |
+| **ia** | 4 | `/api/ia/chatgpt?texto=Hola`, `/api/ia/gemini`, `/api/ia/deepseek` |
+| **reactions** | 19 | `/api/reactions`, `/api/reactions/hug`, `/api/reactions/hug.svg` |
+| **search** | 9 | `/api/search?q=…`, `/api/search/youtube?q=…`, `/api/search/spotify?q=…` |
+| **tools** | 7 | `/api/tools/morse?texto=SOS`, `/api/tools/traductor?texto=hello`, `/api/tools/calculadora?expresion=2%2B2*sqrt(9)` |
+
+Ejemplos con `curl`:
+
+```bash
+curl "https://TU-DOMINIO/api/tools/morse?texto=HOLA%20MUNDO"
+# {"ok":true,"accion":"codificar","resultado":".... --- .-.. .- / -- ..- -. -.. ---"}
+
+curl "https://TU-DOMINIO/api/tools/calculadora?expresion=2%5E8%2Bmin(3,9)"
+# {"ok":true,"expresion":"2^8+min(3,9)","resultado":259,...}
+
+curl "https://TU-DOMINIO/api/canvas/brat?text=Hola%20mundo&formato=png" -o brat.png
+curl "https://TU-DOMINIO/api/anime/gacha?semilla=velirius&tiradas=10"
+curl "https://TU-DOMINIO/api/reactions/hug.svg" -o hug.svg
+```
+
+### Canvas
+
+Cada endpoint usa una plantilla de Drive y compone un **SVG** con el texto y/o la imagen que le
+lleguen por query string. Con `?formato=png` (o un cliente que acepte PNG) se rasteriza con
+`sharp`; si `sharp` no está instalado se devuelve el SVG igualmente: el endpoint nunca falla.
+
+Parámetros habituales: `text`, `username`, `username2`, `image` / `image2` (URL de avatar),
+`texto2`, `fondo`, `formato`. Todas las entradas se escapan y las imágenes remotas se descargan
+con límite de tamaño, timeout y protección anti-SSRF.
+
+### IA (`need api`)
+
+El documento de Drive marca ChatGPT, Gemini y Deepseek con *“need api”*. Con la variable de entorno
+correspondiente se llama al proveedor real; **sin clave responden en modo demo local**, para que el
+endpoint siga funcionando en cualquier despliegue:
+
+| Endpoint | Variable |
+| --- | --- |
+| `/api/ia/chatgpt` | `OPENAI_API_KEY` |
+| `/api/ia/gemini` | `GEMINI_API_KEY` (+ `GEMINI_MODELO` opcional) |
+| `/api/ia/deepseek` | `DEEPSEEK_API_KEY` |
+
+Aceptan `GET ?texto=...` y `POST {"texto":"...","mensajes":[...]}`.
+
+### Search y Download
+
+Usan servicios públicos sin clave: DuckDuckGo HTML, YouTube, iTunes (Spotify), lyrics.ovh,
+OpenGraph/oEmbed, TikTok oEmbed, Aptoide, Google Play y Piped. Si el proveedor no responde,
+`search` devuelve resultados reales del catálogo local y `download` un `502` **estructurado**
+(nunca un 500 ni HTML). `MODO_OFFLINE=1` permite probar ese comportamiento en CI.
+
+---
+
+## 4. Variables de entorno
+
+Ver [`.env.example`](.env.example). Resumen:
+
+| Variable | Por defecto | Descripción |
+| --- | --- | --- |
+| `PORT` | `3000` | Puerto del servidor Node (Render/Vercel lo asignan). |
+| `API_KEY` | — | Si se define, protege todos los `/api/*`. |
+| `OPENAI_API_KEY`, `GEMINI_API_KEY`, `DEEPSEEK_API_KEY` | — | Activan los modelos reales de IA. |
+| `LIMITE_POR_MINUTO` | `120` | Peticiones por IP (`0` = sin límite). |
+| `URL_BASE` | auto | Dominio para URLs absolutas dentro del JSON. |
+| `MODO_OFFLINE` | `0` | Simula falta de internet (tests). |
+| `PERMITIR_PRIVADOS`, `PERMITIR_HOSTS` | — | Permiten hosts internos en desarrollo. |
+
+---
+
+## 5. Estructura
 
 ```
 .
-├── index.html                 # la galería (una sola página)
+├── index.html                 # web de documentación (SPA, /#/home, /#/canvas…)
 ├── assets/
-│   ├── app.js                 # render, filtros, búsqueda, visor, tema
-│   ├── estilos.css            # diseño responsive
-│   └── favicon.svg
-├── fotos/                     # ← AQUÍ van las fotos (y subcarpetas = álbumes)
-│   ├── info.json              # metadatos opcionales
-│   └── LEEME.md
-├── api-docs.html              # documentación del API (/api-docs)
-├── assets/api.js              # lógica de la página de documentación
+│   ├── api-ui.css             # diseño de la web (referencias de Drive)
+│   ├── api-ui.js              # catálogo vivo + playground RUN
+│   ├── canvas/                # 33 plantillas optimizadas de Drive
+│   └── estilos.css, app.js    # galería original
+├── galeria.html               # galería de fotos original (antes index.html)
+├── api-docs.html              # endpoints JSON de la galería
+├── api/
+│   ├── index.mjs              # Vercel: /api
+│   └── [...ruta].mjs          # Vercel: catch-all /api/*
+├── src/
+│   ├── app.mjs                # router + CORS + auth + rate limit (Node puro)
+│   ├── catalogo.mjs           # fuente única de verdad de routers/endpoints
+│   ├── canvas-config.mjs      # zonas y parámetros de cada plantilla
+│   ├── datasets.mjs           # personajes, reacciones, servicios
+│   ├── plantillas.mjs         # GENERADO: imágenes en base64 para serverless
+│   ├── imagen.mjs             # salida SVG / PNG opcional con sharp
+│   ├── utiles.mjs             # fetch seguro, OpenGraph, texto, respuestas
+│   └── endpoints/             # sistema, tools, anime, canvas, ia, search, download, reactions
+├── server.mjs                 # Render / local: estáticos + /api/*
 ├── scripts/
-│   ├── generar-galeria.mjs    # crea galeria.json + datos/*.json recorriendo fotos/
-│   └── servidor-dev.mjs       # servidor local sin dependencias
-├── galeria.config.json        # título, autor, enlaces
-├── vercel.json                # configuración de despliegue
-└── package.json               # scripts dev / build
+│   ├── importar-plantillas.mjs# assets/canvas → src/plantillas.mjs
+│   ├── pruebas.mjs            # suite de integración (npm test)
+│   ├── generar-galeria.mjs    # galería original
+│   └── servidor-dev.mjs       # servidor de la galería (legacy)
+├── vercel.json · render.yaml · Dockerfile · .env.example
+└── docs/DESPLIEGUE.md · docs/referencia-*.jpg
 ```
-
-`galeria.json` y `datos/` **se generan solos** en cada build (están en `.gitignore`); no los edites a mano.
-Lee las dimensiones de cada imagen para reservar el espacio y evitar saltos de diseño, y no necesita
-ninguna librería externa.
-
-### Atajos de la galería
-
-| Acción | Tecla |
-| --- | --- |
-| Buscar | `/` |
-| Foto anterior / siguiente | `←` / `→` |
-| Cerrar visor o diálogo | `Esc` |
-| Deslizar en móvil | ← → |
 
 ---
 
-## 7. Preguntas frecuentes
+## 6. Tests
 
-**¿Se puede subir una foto desde la propia web?**
-No: la galería es 100 % estática, así que las fotos se suben al repositorio. A cambio es gratis,
-rapidísima y no necesita servidor. El botón *“Subir fotos a GitHub”* te lleva directo a la carpeta.
+```bash
+npm test
+```
 
-**Añadí una foto y no aparece.**
-Comprueba que el archivo está dentro de `fotos/` (o una subcarpeta) y que el despliegue de Vercel
-terminó en verde. Los nombres con acentos o espacios funcionan, pero conviene evitarlos.
+La suite levanta el mismo `server.mjs` de Render con `MODO_OFFLINE=1`, recorre **los 100 endpoints
+del catálogo**, genera 37 imágenes, prueba GET/POST, CORS, errores, PNG, OpenAPI, archivos
+estáticos y un servidor mock local para los resolvers de descarga.
 
-**¿Cómo borro una foto?**
-Bórrala de `fotos/` en GitHub y haz *commit*. Desaparece del manifiesto en el siguiente build.
+---
 
-**¿Y si el repo es privado?**
-Vercel puede desplegar repositorios privados, pero las fotos quedarán públicas en la URL del sitio.
-No subas material que no quieras publicar.
+## 7. Notas
 
-**¿Cuántas fotos aguanta?**
-Las que quieras: el manifiesto solo guarda rutas y dimensiones. A partir de varios cientos, usa
-imágenes bien comprimidas para que cargue rápido.
-
-**¿Puedo usar las fotos en mi API o en otra app?**
-Sí: `/datos/fotos.json` y `/datos/albumes/<slug>.json` son JSON estáticos de solo lectura, y cada
-imagen tiene URL directa en `/fotos/…`. Ver la sección 4.
-
-**¿Funciona en GitHub Pages?**
-Sí, pero GitHub Pages no ejecuta `npm run build`; tendrías que hacer *commit* de `galeria.json`
-(quítalo del `.gitignore`, junto con `datos/`) o publicar con una GitHub Action. En Vercel no hace
-falta nada de eso.
+- La galería de fotos original sigue en `/galeria.html` y `/api-docs.html`.
+- `npm run plantillas` regenera `src/plantillas.mjs` si añades o cambias imágenes en
+  `assets/canvas/`. El build de Vercel y Render lo hace automáticamente.
+- Los endpoints que consultan servicios de terceros dependen de que el despliegue tenga salida a
+  internet; Vercel y Render la tienen. El resto (tools, anime, canvas, reactions, IA demo) son
+  100 % locales.
+- Sin `API_KEY` la API es pública, tal como dice la referencia: *(Not Required Token)*.
