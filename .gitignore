@@ -1,0 +1,11 @@
+# Manifiesto generado automáticamente por scripts/generar-galeria.mjs
+galeria.json
+
+# Vercel
+.vercel
+
+# Dependencias y basura del sistema
+node_modules/
+.DS_Store
+Thumbs.db
+*.log

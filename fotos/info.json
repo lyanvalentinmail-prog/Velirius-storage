@@ -1,0 +1,58 @@
+{
+  "01-dunas-al-amanecer.jpg": {
+    "titulo": "Dunas al amanecer",
+    "descripcion": "Primera luz sobre la arena fría. Todavía no hay viento.",
+    "etiquetas": ["arena", "amanecer", "costa"],
+    "fecha": "2026-01-18",
+    "orden": 1,
+    "destacada": true
+  },
+  "02-bruma-en-el-pinar.jpg": {
+    "titulo": "Bruma en el pinar",
+    "descripcion": "Niebla baja entre los troncos, a primera hora.",
+    "etiquetas": ["bosque", "niebla"],
+    "fecha": "2026-02-02"
+  },
+  "03-marea-baja.jpg": {
+    "titulo": "Marea baja",
+    "descripcion": "El agua se retira y deja dibujos en la arena.",
+    "etiquetas": ["mar", "textura"],
+    "fecha": "2026-03-11"
+  },
+  "04-horas-doradas.jpg": {
+    "titulo": "Horas doradas",
+    "descripcion": "Luz cálida antes de que caiga la noche.",
+    "etiquetas": ["luz", "calidez"],
+    "fecha": "2026-04-06"
+  },
+  "05-nocturno-urbano.jpg": {
+    "titulo": "Nocturno urbano",
+    "descripcion": "Luces lejanas y silencio de ciudad dormida.",
+    "etiquetas": ["noche", "ciudad"],
+    "fecha": "2026-05-21"
+  },
+  "archivo/01-cielo-de-invierno.jpg": {
+    "titulo": "Cielo de invierno",
+    "album": "Archivo",
+    "descripcion": "Un deshielo a media tarde.",
+    "etiquetas": ["cielo", "invierno"]
+  },
+  "archivo/02-papel-y-luz.jpg": {
+    "titulo": "Papel y luz",
+    "album": "Archivo",
+    "descripcion": "Estudio de textura sobre papel envejecido.",
+    "etiquetas": ["estudio", "textura"]
+  },
+  "texturas/01-piedra-humeda.jpg": {
+    "titulo": "Piedra húmeda",
+    "album": "Texturas",
+    "descripcion": "Superficie tras la lluvia.",
+    "etiquetas": ["piedra", "lluvia"]
+  },
+  "texturas/02-arena-y-sal.jpg": {
+    "titulo": "Arena y sal",
+    "album": "Texturas",
+    "descripcion": "Detalle de la orilla al mediodía.",
+    "etiquetas": ["arena", "sal"]
+  }
+}

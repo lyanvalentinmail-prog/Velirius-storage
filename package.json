@@ -1,0 +1,15 @@
+{
+  "name": "velirius-galeria",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Galería de fotos estática: sube imágenes a /fotos, haz push y Vercel la publica.",
+  "scripts": {
+    "dev": "node scripts/servidor-dev.mjs",
+    "build": "node scripts/generar-galeria.mjs",
+    "galeria": "node scripts/generar-galeria.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
